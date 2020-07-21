@@ -9,7 +9,7 @@
 // Mario from KerboGames
 // (support@kerbogames.com)
 //
-// PS: If you found any wrong stuff or a typo just submit a PR ^^
+// PS: If you encounter any wrong stuff or a typo just submit a PR ^^
 
 // Some good material on the topic:
 // https://www.youtube.com/watch?v=ZusiKXcz_ac
@@ -17,8 +17,31 @@
 
 #include<stdio.h>
 #include<stdint.h>
+#include<stdbool.h>
 
-// Here we go:
+// Simple:
+
+// Returns x * 2
+uint8_t multiply_by_2(uint8_t x) {
+    return x << 1;
+}
+
+// Returns x / 2
+uint8_t divide_by_2(uint8_t x) {
+    return x >> 1;
+}
+
+// Returns true if 'x is even, else false.
+bool is_event_or_odd(uint8_t x) {
+    return !(x & 1);
+}
+
+// Returns true if 'x' is a power of 2, else false.
+bool is_power_of_2(uint8_t x) {
+    return !(x & (x - 1));
+}
+
+// More advanced:
 
 // Sets the 'bit' in 'v' to 1. (The 'bit' is like an index of an array from 0-7 in an 8-bit integer.)
 // bit              5           // so the 5th bit
@@ -90,6 +113,15 @@ void xor_swap(uint8_t *x, uint8_t *y)  {
 // If x >= y, then -(x < y) => 0 so y ^ 0 is y.
 uint8_t min(uint8_t x, uint8_t y) {
     return y ^ ((x ^ y) & -(x < y));
+}
+
+// Returns the larger integer of x and y but without a brach (if/else/ternary, goto etc..)
+// Normally max is implemented something like this:
+// return x > y ? x : y;
+// But we have a branch there so let's do it witout. (The branch free min could be used to merge arrays for example.)
+// Same tricks as with min() above.
+uint8_t max(uint8_t x, uint8_t y) {
+    return x ^ ((x ^ y) & -(x < y));
 }
 
 // Calculates (x + y) % n assuming 0 <= x <= n && 0 <= y <= n but without a branch (if/else/ternary, goto etc..)
