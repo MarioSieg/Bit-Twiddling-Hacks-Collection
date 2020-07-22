@@ -67,7 +67,7 @@ uint8_t clear_bit(uint8_t x, uint8_t bit) {
 // v                10110101
 // 1 << bit         00010000
 // v ^ (1 << bit)   10100101
-uint8_t toggle_bit(uint8_t x, uint8_t bit) {
+uint8_t flip_bit(uint8_t x, uint8_t bit) {
     return x ^ (1 << bit);
 }
 
@@ -146,7 +146,7 @@ uint64_t round_up_to_pow2(uint64_t x) {
     x |= x >> (1 << 3);         // etc              - shift all one bits 8 bit positions to the right and OR these together.
     x |= x >> (1 << 4);         // etc              - shift all one bits 16 bit positions to the right and OR these together.
     x |= x >> (1 << 5);         // 0100000000000000 - shift all one bits 32 bit positions to the right and OR these together. Not is is eactly one bit less than the power of two.
-    return ++n;                 // 1000000000000000 - after the increment we get the full power to since increment flips the leftmost bit and clears all others.
+    return ++x;                 // 1000000000000000 - after the increment we get the full power to since increment flips the leftmost bit and clears all others.
 }
 
 // Returns the mask of the least-significant 1-bit in x.
@@ -165,7 +165,7 @@ uint8_t least_significat_mask(uint8_t x) {
 // lookup_table[6] => 4
 uint32_t logbase2_of_power2(uint32_t x) {
     const uint64_t de_bruijin = 0x022fdd63cc95386d;
-    static const lookup_table[64] = {
+    static const uint32_t lookup_table[64] = {
         0,1,2,53,3,7,54,27,4,38,41,8,34,55,48,28,62,
         5,39,46,44,42,22,9,24,35,59,56,49,18,29,11,63,
         52,6,26,37,40,33,47,61,45,43,21,23,58,17,10,51,
