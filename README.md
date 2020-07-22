@@ -13,3 +13,5 @@ Short hack assortment:
 * Power rounding
 * Significant masking
 * Logbase2 of power2 calculation using deBruijin sequence
+* Fast inverse sqrt
+* Bit reversion
