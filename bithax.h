@@ -14,12 +14,21 @@
 // Some good material on the topic:
 // https://www.youtube.com/watch?v=ZusiKXcz_ac
 // https://graphics.stanford.edu/~seander/bithacks.html
+// https://www.amazon.de/Hackers-Delight-Henry-S-Warren/dp/0321842685
+// https://www.techiedelight.com/bit-hacks-part-4-playing-letters-english-alphabet/
+// https://codeforwin.org/2018/05/10-cool-bitwise-operator-hacks-and-tricks.html
 
 #include<stdio.h>
 #include<stdint.h>
 #include<stdbool.h>
 
-// Simple:
+// Clears all bits, settings the number to zero. 
+// Maybe you know it from assembly - setting a register to zero by using:
+// xor rax, rax
+// for example. It's exactly the same:
+void set_x_to_zero(int32_t *const x) {
+    *x ^= *x;
+}
 
 // Returns x * 2
 uint8_t multiply_by_2(const uint8_t x) {
@@ -41,42 +50,88 @@ bool is_power_of_2(const uint8_t x) {
     return !(x & (x - 1));
 }
 
-// More advanced:
+// Returns x as uppercase letter.
+// If we carefully analyze, we will notice that ASCII codes of lowercase and uppercase characters differ only in their third significant bit. 
+// For uppercase characters, the bit is 0 and for lowercase characters the bit is 1. We just have toggle that bit on or off!
+// ' ' (space) has the ASCII code of 00100000 and _ (underscore) has an ASCII code of 01011111
+// If we take OR of an uppercase characters with, the third significant bit will be set and we will get its lowercase equivalent.
+// If we take AND of a lowercase character with, the third significant bit will be unset and we will get its uppercase equivalent.
+// If we take XOR of an uppercase or lowercase characters with, only its third significant bit will be toggled. i.e. lowercase becomes uppercase and vice versa. 
+char to_uppercase(const char x) {
+    return x & '_';
+}
+
+// Returns x as lowercase letter.
+// If we carefully analyze, we will notice that ASCII codes of lowercase and uppercase characters differ only in their third significant bit. 
+// For uppercase characters, the bit is 0 and for lowercase characters the bit is 1. We just have toggle that bit on or off!
+// ' ' (space) has the ASCII code of 00100000 and _ (underscore) has an ASCII code of 01011111
+// If we take OR of an uppercase characters with, the third significant bit will be set and we will get its lowercase equivalent.
+// If we take AND of a lowercase character with, the third significant bit will be unset and we will get its uppercase equivalent.
+// If we take XOR of an uppercase or lowercase characters with, only its third significant bit will be toggled. i.e. lowercase becomes uppercase and vice versa. 
+char to_lowercase(const char x) {
+    return x | ' ';
+} 
+
+
+// Returns x as uppercase letter if it was lowercase, if x was lowecase it returns x as uppercase.
+// If we carefully analyze, we will notice that ASCII codes of lowercase and uppercase characters differ only in their third significant bit. 
+// For uppercase characters, the bit is 0 and for lowercase characters the bit is 1. We just have toggle that bit on or off!
+// ' ' (space) has the ASCII code of 00100000 and _ (underscore) has an ASCII code of 01011111
+// If we take OR of an uppercase characters with, the third significant bit will be set and we will get its lowercase equivalent.
+// If we take AND of a lowercase character with, the third significant bit will be unset and we will get its uppercase equivalent.
+// If we take XOR of an uppercase or lowercase characters with, only its third significant bit will be toggled. i.e. lowercase becomes uppercase and vice versa. 
+char invert_case(const char x) {
+    return x ^ ' ';
+}
+
+// Sets the rightmost bit to 1. (Produces all 1's if none)
+// x            10100111
+// x & (x+1)    10101111
+uint8_t set_rightmost_bit(const uint8_t x) {
+    return x & (x + 1);
+}
+
+// Sets the rightmost bit to 0. (Produces 0 if none)
+// x            01011000
+// x & (x-1)    01010000
+uint8_t clear_rightmost_bit(const uint8_t x) {
+    return x & (x - 1);
+}
 
 // Sets the 'bit' in 'v' to 1. (The 'bit' is like an index of an array from 0-7 in an 8-bit integer.)
 // bit              5           // so the 5th bit
-// v                10100101
+// x                10100101
 // 1 << bit         00010000
 // v | (1 << bit)   10110101
 uint8_t set_bit(const uint8_t x, const uint8_t bit) {
     return x | (1 << bit);
 }
 
-// Clears the 'bit' in 'v' - setting it to 0. (The 'bit' is like an index of an array from 0-7 in an 8-bit integer.)
+// Sets the 'bit' in 'v' to 0. (The 'bit' is like an index of an array from 0-7 in an 8-bit integer.)
 // bit              5           // so the 5th bit
-// v                10110101
+// x                10110101
 // 1 << bit         00010000
 // ~(1 << bit)      11101111
-// v & ~(1 << bit)  10100101
+// x & ~(1 << bit)  10100101
 uint8_t clear_bit(const uint8_t x, const uint8_t bit) {
     return x & ~(1 << bit);
 }
 
 // Flips the 'bit' in 'v' - setting it to 0 if it was 1 - if it was 0 it becomes 1. (The 'bit' is like an index of an array from 0-7 in an 8-bit integer.)
 // bit              5           // so the 5th bit
-// v                10110101
+// x                10110101
 // 1 << bit         00010000
-// v ^ (1 << bit)   10100101
+// x ^ (1 << bit)   10100101
 uint8_t flip_bit(const uint8_t x, const uint8_t bit) {
     return x ^ (1 << bit);
 }
 
 // Extracts the bitfield from 'v' using a 'mask' and a 'shift'.
 // shift                3           // shift = 3 - shift defines how many digits to the right from the latest mask digit - 3 here
-// v                    10110101
+// x                    10110101
 // mask                 00011000
-// v & mask             00010000
-// v & mask >> shift    00000011
+// x & mask             00010000
+// x & mask >> shift    00000011
 uint8_t extract_bitfield(const uint8_t x, const uint8_t mask, const uint8_t shift) {
     return (x & mask) >> shift;
 }
@@ -84,10 +139,10 @@ uint8_t extract_bitfield(const uint8_t x, const uint8_t mask, const uint8_t shif
 // Inserts the 'bitfield' from 'v' using a 'mask' and a 'shift'.
 // shift                                3           // shift = 3 - shift defines how many digits to the right from the latest mask digit - 3 here
 // bitfield                             00000110
-// v                                    10110101
+// x                                    10110101
 // mask                                 00011100
-// v & ~mask                            10100001
-// (v & ~mask) | (bitfield << shift)    10111001
+// x & ~mask                            10100001
+// (x & ~mask) | (bitfield << shift)    10111001
 uint8_t insert_bitfield(const uint8_t x, const uint8_t bitfield, const uint8_t mask, const uint8_t shift) {
     return (x & ~mask) | (bitfield << shift);
 }
@@ -130,7 +185,7 @@ uint8_t max(const uint8_t x, const uint8_t y) {
 // But division is expensive so or even better:
 // uint8_t t = x + y;
 // return (t < n) ? t : t - n;
-// But not there is a branch, so let's do it without with the same trick used in min() above.
+// Let's do it without with the same trick used in min() above:
 uint8_t modular_addition(const uint8_t x, const uint8_t y, const uint8_t mod) {
     uint8_t t = x + y;
     return t - (mod & - (t >= mod));
@@ -145,7 +200,7 @@ uint8_t least_significat_mask(const uint8_t x) {
 }
 
 // Compute log x, where x is a power of 2.
-// A deBrujin sequence s of length 2y is a cyclic 0-1 sequance such that
+// A deBrujin sequence s of length 2y is a cyclic 0-1 sequence such that
 // each of the 2y 0-1 strings of length y occurs exactly once as a substring of s.
 // 00011101 * pow(2, 4) => 11010000
 // 11010000 >> 5 => 6
@@ -192,4 +247,20 @@ uint32_t reverse_bits(register uint32_t x) {
     x = (((x & 0xf0f0f0f0) >> 4) | ((x & 0x0f0f0f0f) << 4));
     x = (((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8));
     return((x >> 16) | (x << 16));
+}
+
+// XOR if assignment branch:
+// if (x == a)
+//  x = b;
+// if (x == b)
+//  x = a;
+void if_x_equals_a(int32_t *const x, const int32_t a, const int32_t b) {
+    *x = a ^ b ^ *x; //if (x == a) x = b
+}
+
+// XOR encryption (!!NOT CRYPTOGRAPHICALLY SECURE!!):
+void encrypt_decrypt(register char *c, const register uint8_t key) {
+    for(; *c; ++c) {
+        *c ^= key;
+    }
 }
