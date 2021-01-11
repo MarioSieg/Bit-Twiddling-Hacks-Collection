@@ -15,3 +15,4 @@ Short hack assortment:
 * Logbase2 of power2 calculation using deBruijin sequence
 * Fast inverse sqrt
 * Bit reversion
+* Masked color operations
