@@ -1,15 +1,13 @@
 // Welcome to my little collection of bitwise hacks!
 // I've put this together because I also wanted to learn more bitwise hacks, so I created a cheat sheet in C!
 // Here you will find some common but also some of the most evil and cool bitwise hacks, for integers and floats.
-// These should be translateable to any programming language, which has bitwise operations. (I don't know any without...)
-// But some of them depend on the two complement representation and that booleans can be converted to 1 for true and 0 for zero.
+// These should be translateable to any programming language, which has bitwise operations. But some of them depend on the two complement representation and IEEE 754.
 // I wish you happy journey! ༼☯﹏☯༽
 //
 // Kind Regards,
-// Mario from KerboGames
-// (support@kerbogames.com)
+// Mario <pinsrq>
 //
-// PS: If you encounter any wrong stuff or a typo just submit a PR ^^
+// PS: If you encounter any weird stuff or a typo just submit a PR ^^
 
 // Some good material on the topic:
 // https://www.youtube.com/watch?v=ZusiKXcz_ac
