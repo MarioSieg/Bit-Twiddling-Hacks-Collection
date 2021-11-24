@@ -1,13 +1,10 @@
 // Welcome to my little collection of bitwise hacks!
-// I've put this together because I also wanted to learn more bitwise hacks, so I created a cheat sheet in C!
-// Here you will find some common but also some of the most evil and cool bitwise hacks, for integers and floats.
-// These should be translateable to any programming language, which has bitwise operations. But some of them depend on the two complement representation and IEEE 754.
-// I wish you happy journey! ༼☯﹏☯༽
+// I've put this together because I also wanted to learn more bitwise hacks, so I created a cheat sheet in C (but also useable in C++).
+// Here you will find some common but also some of the most evil bitwise hacks, for integers and floats.
+// These should be translateable to any programming language, which has bitwise operations, but some of them depend on the two complement representation and IEEE 754.
+// Happy journey! ༼☯﹏☯༽
 //
-// Kind Regards,
-// Mario <pinsrq>
-//
-// PS: If you encounter any weird stuff or a typo just submit a PR ^^
+// Mario "pinsrq"
 
 // Some good material on the topic:
 // https://www.youtube.com/watch?v=ZusiKXcz_ac
@@ -15,36 +12,54 @@
 // https://www.amazon.de/Hackers-Delight-Henry-S-Warren/dp/0321842685
 // https://www.techiedelight.com/bit-hacks-part-4-playing-letters-english-alphabet/
 // https://codeforwin.org/2018/05/10-cool-bitwise-operator-hacks-and-tricks.html
+// https://www.youtube.com/watch?v=ZRNO-ewsNcQ
 
-#include<stdio.h>
-#include<stdint.h>
-#include<stdbool.h>
+#ifndef BITHAX_H
+#define BITHAX_H
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Clears all bits, settings the number to zero. 
-// Maybe you know it from assembly - setting a register to zero by using:
-// xor rax, rax
-// for example. It's exactly the same:
-void set_x_to_zero(int32_t *const x) {
+// Maybe you know it from assembly - setting a to zero by using:
+// xorq %rax, %rax for example.
+// It's exactly the same:
+static inline void set_x_to_zero(int32_t *const x) {
     *x ^= *x;
 }
 
 // Returns x * 2
-uint8_t multiply_by_2(const uint8_t x) {
+static inline uint8_t multiply_by_2(const uint8_t x) {
     return x << 1;
 }
 
 // Returns x / 2
-uint8_t divide_by_2(const uint8_t x) {
+static inline uint8_t divide_by_2(const uint8_t x) {
     return x >> 1;
 }
 
+// Returns x * 10
+static inline int32_t multiply_by_10(const int32_t x){
+	return x + x + ( x << 3 );
+}
+
+// Returns x / 10
+static inline int64_t divide_by_10(const int64_t x){
+	return (x * INT64_C(0xCCCCCCCD)) >> INT64_C(35);
+}
+
 // Returns true if 'x is even, else false.
-bool is_event_or_odd(const uint8_t x) {
+static inline bool is_event_or_odd(const uint8_t x) {
     return !(x & 1);
 }
 
 // Returns true if 'x' is a power of 2, else false.
-bool is_power_of_2(const uint8_t x) {
+static inline bool is_power_of_2(const uint8_t x) {
     return !(x & (x - 1));
 }
 
@@ -55,7 +70,7 @@ bool is_power_of_2(const uint8_t x) {
 // If we take OR of an uppercase characters with, the third significant bit will be set and we will get its lowercase equivalent.
 // If we take AND of a lowercase character with, the third significant bit will be unset and we will get its uppercase equivalent.
 // If we take XOR of an uppercase or lowercase characters with, only its third significant bit will be toggled. i.e. lowercase becomes uppercase and vice versa. 
-char to_uppercase(const char x) {
+static inline char to_uppercase(const char x) {
     return x & '_';
 }
 
@@ -66,7 +81,7 @@ char to_uppercase(const char x) {
 // If we take OR of an uppercase characters with, the third significant bit will be set and we will get its lowercase equivalent.
 // If we take AND of a lowercase character with, the third significant bit will be unset and we will get its uppercase equivalent.
 // If we take XOR of an uppercase or lowercase characters with, only its third significant bit will be toggled. i.e. lowercase becomes uppercase and vice versa. 
-char to_lowercase(const char x) {
+static inline char to_lowercase(const char x) {
     return x | ' ';
 } 
 
@@ -78,21 +93,21 @@ char to_lowercase(const char x) {
 // If we take OR of an uppercase characters with, the third significant bit will be set and we will get its lowercase equivalent.
 // If we take AND of a lowercase character with, the third significant bit will be unset and we will get its uppercase equivalent.
 // If we take XOR of an uppercase or lowercase characters with, only its third significant bit will be toggled. i.e. lowercase becomes uppercase and vice versa. 
-char invert_case(const char x) {
+static inline char invert_case(const char x) {
     return x ^ ' ';
 }
 
 // Sets the rightmost bit to 1. (Produces all 1's if none)
 // x            10100111
 // x & (x+1)    10101111
-uint8_t set_rightmost_bit(const uint8_t x) {
+static inline uint8_t set_rightmost_bit(const uint8_t x) {
     return x & (x + 1);
 }
 
 // Sets the rightmost bit to 0. (Produces 0 if none)
 // x            01011000
 // x & (x-1)    01010000
-uint8_t clear_rightmost_bit(const uint8_t x) {
+static inline uint8_t clear_rightmost_bit(const uint8_t x) {
     return x & (x - 1);
 }
 
@@ -101,7 +116,7 @@ uint8_t clear_rightmost_bit(const uint8_t x) {
 // x                10100101
 // 1 << bit         00010000
 // v | (1 << bit)   10110101
-uint8_t set_bit(const uint8_t x, const uint8_t bit) {
+static inline uint8_t set_bit(const uint8_t x, const uint8_t bit) {
     return x | (1 << bit);
 }
 
@@ -111,7 +126,7 @@ uint8_t set_bit(const uint8_t x, const uint8_t bit) {
 // 1 << bit         00010000
 // ~(1 << bit)      11101111
 // x & ~(1 << bit)  10100101
-uint8_t clear_bit(const uint8_t x, const uint8_t bit) {
+static inline uint8_t clear_bit(const uint8_t x, const uint8_t bit) {
     return x & ~(1 << bit);
 }
 
@@ -120,7 +135,7 @@ uint8_t clear_bit(const uint8_t x, const uint8_t bit) {
 // x                10110101
 // 1 << bit         00010000
 // x ^ (1 << bit)   10100101
-uint8_t flip_bit(const uint8_t x, const uint8_t bit) {
+static inline uint8_t flip_bit(const uint8_t x, const uint8_t bit) {
     return x ^ (1 << bit);
 }
 
@@ -130,8 +145,120 @@ uint8_t flip_bit(const uint8_t x, const uint8_t bit) {
 // mask                 00011000
 // x & mask             00010000
 // x & mask >> shift    00000011
-uint8_t extract_bitfield(const uint8_t x, const uint8_t mask, const uint8_t shift) {
+static inline uint8_t extract_bitfield(const uint8_t x, const uint8_t mask, const uint8_t shift) {
     return (x & mask) >> shift;
+}
+
+// Convert's the trailig zero bits to a 1.
+// x                    01101000 <- trailing zero bits
+// x - 1                01100111
+// (x - 1) | x          01101111
+static inline uint32_t convert_trailing_0s_to_1s(const uint32_t x) {
+    return (x - 1) | x;
+}
+
+// Extracts the LSB (least significant bit) which is 1 from x.
+// For two complement:
+// -x = ~x + 1
+// x                    01101000
+// -x                   10011000
+// x & -x               00001000
+static inline uint32_t extract_1_lsb(const uint32_t x) {
+    return x & -x;
+}
+
+// Copies bits from b into a where mask[bit] = 1
+// a                    0101010001011110
+// b                    1111011011011000
+// mask                 0100010110110110
+// b & mask             0100010010010000
+// a & ~mask            0001000001001000
+// (b&mask) | (a&~mask) 0101010011011000
+static inline uint32_t masked_copy(const uint32_t a, const uint32_t b, const uint32_t mask) {
+    return (b & mask) | (a & ~mask);
+}
+
+// Swaps the bit in x at index a with the bit in x at index b.
+// x                    01001100
+// a                    3
+// b                    5
+// p 1 ^ 0              1
+// x ^ (p << a)
+// x ^ (p << b)
+// x                    01101100
+static inline uint32_t swap_bits(uint32_t x, const uint32_t a, const uint32_t b) {
+    const uint32_t p = (x >> a) ^ (x >> b) & 1;
+    x ^= (p << a);
+    x ^= (p << b);
+    return x;
+}
+
+// Kerninghan's population count (popcnt).
+// Count's the number of 1 bits.
+// x                    011001000
+// x = x & (x - 1)      011000000 <- zero lowest 1 bit
+// r = 0, reduce        011001000
+// r = 1, reduce        011000000
+// r = 2, reduce        010000000
+// r = 3, reduce        000000000
+// result               3
+static inline uint8_t population_count(uint32_t x) {
+    uint8_t i;
+    for (i = 0; x != 0; ++i) {
+        x &= (x - 1); // zero lowest 1 bit as long as x is not zero
+    }
+    return i; // iteration count = population count
+}
+
+// Counts the amount of bit islands.
+// A bit island is a group of 1 bits. The groups may be seperated by 0s.
+// x                    1111001111001110
+// bit islands of x     1111__1111__111
+// seperated by         ____00____00___
+// bit islands = 3 
+// x                    1111001111001110
+// x >> 1               0111100111100111
+// x ^ (x >> 1)         1000101000101001 <- mask
+// popcnt(x ^ (x >> 1)) 6
+// if x begins with 1 first island will be ignored so:
+// (x & 1) ensures counting
+// (x & 1) + 
+// 6 >> 1               3
+// result               3
+static inline uint32_t count_bit_islands(const uint32_t x) {
+    return (x & 1) + (population_count(x ^ (x >> 1)) >> 1);
+}
+
+// Bit scan forwards.
+// Finds the index of the lowest 1 bit.
+static inline int8_t bit_scan_forwards(uint32_t x) {
+    if (x == 0) {
+        return -1;
+    }
+    x &= -x;
+    uint8_t count = 0;
+    if (x & 0xFFFFFFFF) {
+        count += 16;
+    }
+    if (x & 0xFF00FF00) {
+        count += 8;
+    }
+    if (x & 0xF0F0F0F0) {
+        count += 4;
+    }
+    if (x & 0xCCCCCCCC) {
+        count += 2;
+    }
+    if (x & 0xAAAAAAAA) {
+        count += 1;
+    }
+    return count;
+}
+
+// Computes the next lexicographic permutation.
+static inline int32_t next_lexicographic_permutation(const uint32_t x) {
+    const uint32_t t = (x | (x - 1)) + 1;
+    return t | ((((t & -(int32_t)t) / (x & -(int32_t)x)) >> 1) - 1);
 }
 
 // Inserts the 'bitfield' from 'v' using a 'mask' and a 'shift'.
@@ -141,7 +268,7 @@ uint8_t extract_bitfield(const uint8_t x, const uint8_t mask, const uint8_t shif
 // mask                                 00011100
 // x & ~mask                            10100001
 // (x & ~mask) | (bitfield << shift)    10111001
-uint8_t insert_bitfield(const uint8_t x, const uint8_t bitfield, const uint8_t mask, const uint8_t shift) {
+static inline uint8_t insert_bitfield(const uint8_t x, const uint8_t bitfield, const uint8_t mask, const uint8_t shift) {
     return (x & ~mask) | (bitfield << shift);
 }
 
@@ -151,10 +278,13 @@ uint8_t insert_bitfield(const uint8_t x, const uint8_t bitfield, const uint8_t m
 // x ^= y   10000100
 // y ^= x   00101010
 // x ^= y   10101110
-void xor_swap(uint8_t *const x, uint8_t *const y)  {
-    *x ^= *y;
-    *y ^= *x;
-    *x ^= *y;
+static inline void xor_swap(uint8_t *const x, uint8_t *const y)  {
+    // if x equals y, there is nothing to do and xoring each other will zero out both, so we only swap if they're not equal
+    if (*x != *y) {
+        *x ^= *y;
+        *y ^= *x;
+        *x ^= *y;
+    }
 }
 
 // Returns the smaller integer of x and y but without a brach (if/else/ternary, goto etc..)
@@ -164,7 +294,7 @@ void xor_swap(uint8_t *const x, uint8_t *const y)  {
 // If x < y, then -(x < y) => -1 => all 1's in two complement representation.
 // So we have y ^ (x ^ y) => x
 // If x >= y, then -(x < y) => 0 so y ^ 0 is y.
-uint8_t min(const uint8_t x, const uint8_t y) {
+static inline uint8_t min(const uint8_t x, const uint8_t y) {
     return y ^ ((x ^ y) & -(x < y));
 }
 
@@ -173,7 +303,7 @@ uint8_t min(const uint8_t x, const uint8_t y) {
 // return x > y ? x : y;
 // But we have a branch there so let's do it witout. (The branch free min could be used to merge arrays for example.)
 // Same tricks as with min() above.
-uint8_t max(const uint8_t x, const uint8_t y) {
+static inline uint8_t max(const uint8_t x, const uint8_t y) {
     return x ^ ((x ^ y) & -(x < y));
 }
 
@@ -184,8 +314,8 @@ uint8_t max(const uint8_t x, const uint8_t y) {
 // uint8_t t = x + y;
 // return (t < n) ? t : t - n;
 // Let's do it without with the same trick used in min() above:
-uint8_t modular_addition(const uint8_t x, const uint8_t y, const uint8_t mod) {
-    uint8_t t = x + y;
+static inline uint8_t modular_addition(const uint8_t x, const uint8_t y, const uint8_t mod) {
+    const uint8_t t = x + y;
     return t - (mod & - (t >= mod));
 }
 
@@ -193,7 +323,7 @@ uint8_t modular_addition(const uint8_t x, const uint8_t y, const uint8_t mod) {
 // x        00000101
 // -x       11111011
 // x & -x   00000001
-uint8_t least_significat_mask(const uint8_t x) {
+static inline uint8_t least_significat_mask(const uint8_t x) {
     return x & -x;
 }
 
@@ -203,7 +333,7 @@ uint8_t least_significat_mask(const uint8_t x) {
 // 00011101 * pow(2, 4) => 11010000
 // 11010000 >> 5 => 6
 // lookup_table[6] => 4
-uint32_t logbase2_of_power2(const uint32_t x) {
+static inline uint32_t logbase2_of_power2(const uint32_t x) {
     const uint64_t de_bruijin = 0x022fdd63cc95386d;
     static const uint32_t lookup_table[64] = {
         0,1,2,53,3,7,54,27,4,38,41,8,34,55,48,28,62,
@@ -215,7 +345,7 @@ uint32_t logbase2_of_power2(const uint32_t x) {
 }
 
 // Rounds up the number to a power of 2.
-uint64_t round_up_to_pow2(register uint64_t x) {
+static inline uint64_t round_up_to_pow2(uint64_t x) {
     // x 0010000001010000
     --x;                        // 0010000001010000 - flips rightmost 1 bit to zero and fills the right with 1's.
     x |= x >> (1 << 0);         // 0011000001101111 - shift all one bits 1 bit position to the right and OR these together.
@@ -230,21 +360,21 @@ uint64_t round_up_to_pow2(register uint64_t x) {
 // Fast method to calculate the inver square root (modified quake version.)
 // Used an approximation constant and newton's method to calculate it via a the magic number.
 // See https://en.wikipedia.org/wiki/Fast_inverse_square_root
-float fast_inversed_sqrt(const float x) {
+static inline float fast_inversed_sqrt(const float x) {
     const float x2 = x * .5f;
-    const uint32_t i = 0x5f3759df - (*(const uint32_t *const)&x >> 1);
+    const uint32_t i = 0x5F3759DF - (*(const uint32_t *const)&x >> 1);
     const float y = *(const float *const)&i;
-    return y * (1.5f - (x2 * y * y));
+    return y * (1.5F - (x2 * y * y));
 }
 
 // Reverses the bits of the integer.
 // See https://stackoverflow.com/questions/178265/what-is-the-most-hard-to-understand-piece-of-c-code-you-know
-uint32_t reverse_bits(register uint32_t x) {
-    x = (((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1));
-    x = (((x & 0xcccccccc) >> 2) | ((x & 0x33333333) << 2));
-    x = (((x & 0xf0f0f0f0) >> 4) | ((x & 0x0f0f0f0f) << 4));
-    x = (((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8));
-    return((x >> 16) | (x << 16));
+static inline uint32_t reverse_bits(uint32_t x) {
+    x = (((x & 0xAAAAAAAA) >> 1) | ((x & 0x55555555) << 1));
+    x = (((x & 0xCCCCCCCC) >> 2) | ((x & 0x33333333) << 2));
+    x = (((x & 0xF0F0F0F0) >> 4) | ((x & 0x0F0F0F0F) << 4));
+    x = (((x & 0xFF00FF00) >> 8) | ((x & 0x00FF00FF) << 8));
+    return ((x >> 16) | (x << 16));
 }
 
 // XOR if assignment branch:
@@ -252,26 +382,21 @@ uint32_t reverse_bits(register uint32_t x) {
 //  x = b;
 // if (x == b)
 //  x = a;
-void if_x_equals_a(int32_t *const x, const int32_t a, const int32_t b) {
+static inline void if_x_equals_a(int32_t *const x, const int32_t a, const int32_t b) {
     *x = a ^ b ^ *x; //if (x == a) x = b
 }
 
-// XOR encryption (!!NOT CRYPTOGRAPHICALLY SECURE!!):
-void encrypt_decrypt(register char *c, const register uint8_t key) {
-    for(; *c; ++c) {
-        *c ^= key;
+// XOR encryption !NOT CRYPTOGRAPHICALLY SECURE!
+// Parameter "c" must point to a char buffer of "len" length.
+static inline void encrypt_decrypt(char *c, const size_t len, const uint8_t key) {
+    const char* const end = c + len;
+    while (c < end) {
+        *c++ ^= key;
     }
 }
 
-
-// multiplicate with 10
-void mul10(int32_t *x){
-	*x += *x + ( *x << 3 );
+#ifdef __cplusplus
 }
+#endif
 
-// divide by 10. needs 64bit integers for the calculation
-void div10(uint32_t *x){
-	*x = ( (int64_t)*x *0xcccccccd ) >> 35;
-}
-
-
+#endif

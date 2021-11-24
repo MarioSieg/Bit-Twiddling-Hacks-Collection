@@ -5,8 +5,16 @@ If you know any hacks not included, just submit a PR, or if you encounter any wr
 Short hack assortment:
 * Number multiplication, division
 * Even, odd and power checks
+* Uppercase, lowercase
 * Set, clear and flip bits
 * Insert and extract bitfields into words
+* Convert LSL, MSB, trailing bits
+* Masked copy
+* Bit swap
+* Population count
+* Bit island count
+* Bit scans
+* Lexiocographic permutations
 * Swapping without temporaries
 * Size comparison: min() and max() functions without branching
 * Modular additions
@@ -16,4 +24,5 @@ Short hack assortment:
 * Fast inverse sqrt
 * Bit reversion
 * Masked color operations
-* Division and multiplication by 10
+* XOR en/decryption
+* Branchless assignments
