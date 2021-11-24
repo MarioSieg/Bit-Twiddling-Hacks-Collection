@@ -262,3 +262,16 @@ void encrypt_decrypt(register char *c, const register uint8_t key) {
         *c ^= key;
     }
 }
+
+
+// multiplicate with 10
+void mul10(int32_t *x){
+	*x += *x + ( *x << 3 );
+}
+
+// divide by 10. needs 64bit integers for the calculation
+void div10(uint32_t *x){
+	*x = ( (int64_t)*x *0xcccccccd ) >> 35;
+}
+
+

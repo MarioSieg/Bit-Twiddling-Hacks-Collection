@@ -16,3 +16,4 @@ Short hack assortment:
 * Fast inverse sqrt
 * Bit reversion
 * Masked color operations
+* Division and multiplication by 10
