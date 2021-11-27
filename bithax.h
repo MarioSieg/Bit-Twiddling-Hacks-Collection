@@ -33,6 +33,36 @@ static inline void set_x_to_zero(int32_t *const x) {
     *x ^= *x;
 }
 
+// Set's the memory to zero using a self XOR.
+// Same as memset(buf, 0, len).
+static inline void xor_zero_memory(void *const buf, const size_t len) {
+    uint8_t *i = (uint8_t*)buf;
+    const uint8_t *const end = i + len;
+    for (; i < end; ++i) {
+        *i ^= *i;
+    }
+}
+
+// Swaps the content of the two buffers "a" and "b" using a XOR swap.
+// Both buffer must have the same size "len".
+// Usage:
+// int main() {
+//     int a = 10;
+//     int b = 3;
+//     mem_swap(&a, &b, sizeof(int));
+//     printf("%d %d", a, b);
+// }
+static inline void mem_swap(void* const a, void* const b, const size_t len) {
+    uint8_t *ai = (uint8_t*)a;
+    uint8_t *bi = (uint8_t*)b;
+    const uint8_t* const end = bi + len;
+    for (; bi < end; ++ai, ++bi) {
+        *ai ^= *bi;
+        *bi ^= *ai;
+        *ai ^= *bi;
+    }
+}
+
 // Returns x * 2
 static inline uint8_t multiply_by_2(const uint8_t x) {
     return x << 1;
@@ -49,8 +79,8 @@ static inline int32_t multiply_by_10(const int32_t x){
 }
 
 // Returns x / 10
-static inline int64_t divide_by_10(const int64_t x){
-	return (x * INT64_C(0xCCCCCCCD)) >> INT64_C(35);
+static inline int32_t divide_by_10(const int32_t x){
+	return (int32_t)(((int64_t)x * INT64_C(0xCCCCCCCD)) >> INT64_C(35));
 }
 
 // Returns true if 'x is even, else false.
